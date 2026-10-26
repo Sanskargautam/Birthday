@@ -135,12 +135,29 @@ code {
 }
 
 .site-top__date {
-  margin: 0.2rem 0 0.65rem;
+  margin: 0.25rem 0 0;
   font-size: 0.8rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  opacity: 0.9;
+  opacity: 0.95;
   color: var(--gold);
+}
+
+.site-top__tagline {
+  margin: 0.35rem auto 0;
+  max-width: 22rem;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  opacity: 0.88;
+  color: var(--ink);
+}
+
+.site-top__signoff {
+  margin: 0.35rem 0 0.55rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  opacity: 0.65;
+  color: var(--terracotta);
 }
 
 .site-top__nav {
@@ -1918,6 +1935,15 @@ main {
   text-shadow: 0 8px 32px rgba(0, 0, 0, 0.65);
 }
 
+.header-loop__subtitle {
+  margin: 0.55rem auto 0;
+  max-width: 20rem;
+  font-size: clamp(0.88rem, 3.2vw, 1rem);
+  line-height: 1.45;
+  opacity: 0.92;
+  text-shadow: 0 6px 24px rgba(0, 0, 0, 0.55);
+}
+
 .header-loop__scroll {
   position: absolute;
   bottom: 0.35rem;
@@ -2746,6 +2772,16 @@ main {
   }
 }
 
+
+.quest-step__caption {
+  margin: 0 0 0.45rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.92;
+  line-height: 1.35;
+}
 
 .quest-step__quote {
   font-family: 'Fraunces', Georgia, serif;

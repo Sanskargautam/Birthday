@@ -1,18 +1,31 @@
 # Deploy
 
-The site is ~300MB with photos/videos. Use a host that can run **Node** (`npm run start`), not static-only, so gift picks save correctly.
+The site is ~300MB with photos/videos. Use a host that runs the **Dockerfile** (or `npm run build` + `npm run start`), not static-only, so gift picks work.
 
-## Railway (recommended)
+## Render (recommended if Railway signup fails)
 
-See root [README.md](../README.md). Dockerfile + `railway.toml` are included.
+1. [render.com](https://render.com) → sign up with **GitHub** (often easier than Railway).
+2. **New** → **Blueprint** → connect repo **Sanskargautam/Birthday** (uses `render.yaml` in repo root).
+   - Or **New Web Service** → same repo → **Language: Docker** → Dockerfile path `./Dockerfile`.
+3. Add env **`GIFTS_VIEW_SECRET`** (long random string) in the dashboard.
+4. Deploy. Open the `*.onrender.com` URL.
 
-1. Import `Sanskargautam/Birthday` from GitHub.
-2. Set `GIFTS_VIEW_SECRET`.
-3. Add a volume at `/app/data` and `DATA_DIR=/app/data` if you want picks to survive redeploys.
+**Gift log:** `https://YOUR-SERVICE.onrender.com/api/gift-picks?key=YOUR_SECRET`
+
+Free tier sleeps after ~15 min idle (first visit may take ~30s to wake). Gift files on free disk can reset on redeploy; for a birthday week that’s usually fine.
+
+## Fly.io (persistent disk, more technical)
+
+1. [fly.io](https://fly.io) → sign up → install `flyctl`.
+2. In project folder: `fly launch` (use existing Dockerfile), `fly volumes create birthday_data --size 1`, mount at `/app/data`, set `DATA_DIR=/app/data` and `GIFTS_VIEW_SECRET`.
+
+## Railway
+
+See [README.md](../README.md). Dockerfile + `railway.toml` included.
 
 ## Vercel / Netlify / GitHub Pages
 
-Static deploy works for photos and video, but **gift saves will fail** (no `/api/gift-picks`). Use Railway or run `npm run start` on a VPS instead.
+Static only — **gift saves will not work** without a separate backend.
 
 ## After deploy
 

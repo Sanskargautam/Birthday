@@ -2,6 +2,16 @@
 
 Private birthday page with photos, videos, letter, and a gift picker.
 
+## Push to GitHub (office laptop / Uska token)
+
+No `gh login` needed.
+
+1. On **Uska’s GitHub**: create empty repo **Birthday** (public or private).
+2. **Settings → Developer settings → Personal access tokens** → classic token with **repo** scope.
+3. In this folder, create **`.github-push-token`** (gitignored) — paste the token, one line, no quotes.
+4. Edit **`github-push.config.json`**: set `"owner"` to Uska’s GitHub username, `"repo": "Birthday"`.
+5. Run: **`npm run push:github`** (first push ~300MB, can take a while).
+
 ## Local
 
 ```bash

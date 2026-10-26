@@ -1,0 +1,13 @@
+# Render Blueprint: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: birthday-site
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: GIFTS_VIEW_SECRET
+        sync: false
+      - key: DATA_DIR
+        value: /app/data

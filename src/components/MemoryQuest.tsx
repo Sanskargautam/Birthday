@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { fromAuthor, memoryQuestSteps } from '../content/messages';
+import { memoryQuestSteps, questCopy } from '../content/messages';
 import { fireConfetti } from '../utils/confetti';
 import { FestiveHead } from './FestiveHead';
 
@@ -20,10 +20,7 @@ export function MemoryQuest() {
 
   return (
     <section id="quest" className="section page-card page-card--glass page-card--celebrate">
-      <FestiveHead
-        title="Little knots to untie"
-        subtitle={`Four little surprises from ${fromAuthor.name} — then your letter opens below.`}
-      />
+      <FestiveHead title={questCopy.title} subtitle={questCopy.subtitle} />
       <ol className="quest-list">
         {memoryQuestSteps.map((step, index) => {
           const open = unlocked.has(step.id);
@@ -41,10 +38,18 @@ export function MemoryQuest() {
                 <article className="quest-step__reveal">
                   <div className="frame-mat frame-mat--compact">
                     <div className="photo-frame photo-frame--quest">
-                      <img src={step.photo} alt="" loading="lazy" decoding="async" />
+                      <img
+                        src={step.photo}
+                        alt={step.photoAlt}
+                        loading="lazy"
+                        decoding="async"
+                      />
                     </div>
                   </div>
                   <div className="quest-step__text">
+                    {step.photoCaption ? (
+                      <p className="quest-step__caption">{step.photoCaption}</p>
+                    ) : null}
                     <p className="quest-step__quote">{step.whisper}</p>
                   </div>
                 </article>
@@ -54,10 +59,10 @@ export function MemoryQuest() {
         })}
       </ol>
       {unlocked.size === memoryQuestSteps.length ? (
-        <p className="quest-done" role="status">All untied — your letter is right below.</p>
+        <p className="quest-done" role="status">{questCopy.done}</p>
       ) : (
         <p className="quest-skip">
-          <a href="#cards">Skip to the letter</a>
+          <a href="#cards">{questCopy.skipLabel}</a>
         </p>
       )}
     </section>

@@ -1,30 +1,54 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { VideoClip } from '../generated/videoClips';
 
 type Props = {
   clip: VideoClip;
   className?: string;
+  /** Header: load sooner. Clips below the fold: defer. */
+  priority?: 'high' | 'low';
 };
 
 /** Browsers allow autoplay only when muted. */
-export function LoopClip({ clip, className = '' }: Props) {
-  const [src, setSrc] = useState(clip.src);
+export function LoopClip({ clip, className = '', priority = 'high' }: Props) {
+  const ref = useRef<HTMLVideoElement | null>(null);
+  const [activeSrc, setActiveSrc] = useState<string | undefined>(priority === 'high' ? clip.src : undefined);
   const [triedFallback, setTriedFallback] = useState(false);
+
+  useEffect(() => {
+    if (priority === 'high' || activeSrc) return;
+    const el = ref.current;
+    if (!el) return;
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          setActiveSrc(clip.src);
+          io.disconnect();
+        }
+      },
+      { rootMargin: '120px 0px', threshold: 0.1 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [activeSrc, clip.src, priority]);
+
+  const preload = priority === 'high' ? 'metadata' : 'none';
 
   return (
     <video
+      ref={ref}
       className={className}
-      src={src}
-      autoPlay
+      src={activeSrc}
+      autoPlay={Boolean(activeSrc)}
       muted
       loop
       playsInline
-      preload="auto"
+      preload={preload}
       aria-label={clip.label}
       onError={() => {
-        if (!triedFallback && clip.fallbackSrc && src !== clip.fallbackSrc) {
+        if (!triedFallback && clip.fallbackSrc && activeSrc !== clip.fallbackSrc) {
           setTriedFallback(true);
-          setSrc(clip.fallbackSrc);
+          setActiveSrc(clip.fallbackSrc);
         }
       }}
     />

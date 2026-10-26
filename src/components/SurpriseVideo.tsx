@@ -14,7 +14,7 @@ export function SurpriseVideo() {
           {clips.map((clip) => (
             <figure key={clip.id} className="loop-clip-frame frame-mat frame-mat--video">
               <div className="loop-clip-frame__inner">
-                <LoopClip clip={clip} className="loop-clip-frame__video" />
+                <LoopClip clip={clip} className="loop-clip-frame__video" priority="low" />
               </div>
             </figure>
           ))}

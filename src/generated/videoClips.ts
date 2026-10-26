@@ -2,8 +2,8 @@
 export type VideoClip = { id: string; src: string; mime: string; label: string; fallbackSrc?: string };
 
 export const videoClips: VideoClip[] = [
-  { id: '01', src: '/videos/web/IMG_5900.mp4', mime: 'video/mp4', label: 'Moment 1', fallbackSrc: '/videos/IMG_5900.MOV' },
-  { id: '02', src: '/videos/web/IMG_6945.mp4', mime: 'video/mp4', label: 'Moment 2', fallbackSrc: '/videos/IMG_6945.mov' },
-  { id: '03', src: '/videos/web/filtered-D9D36EFF-8272-4BCB-B074-EABBB7BBEF85.mp4', mime: 'video/mp4', label: 'Moment 3', fallbackSrc: '/videos/filtered-D9D36EFF-8272-4BCB-B074-EABBB7BBEF85.MP4' },
-  { id: '04', src: '/videos/web/ScreenRecording_10-01-2025-23-22-38_1.mp4', mime: 'video/mp4', label: 'Moment 4', fallbackSrc: '/videos/ScreenRecording_10-01-2025%2023-22-38_1.mov' },
+  { id: '01', src: '/videos/web/IMG_5900.mp4', mime: 'video/mp4', label: 'Moment 1' },
+  { id: '02', src: '/videos/web/IMG_6945.mp4', mime: 'video/mp4', label: 'Moment 2' },
+  { id: '03', src: '/videos/web/filtered-D9D36EFF-8272-4BCB-B074-EABBB7BBEF85.mp4', mime: 'video/mp4', label: 'Moment 3' },
+  { id: '04', src: '/videos/web/ScreenRecording_10-01-2025-23-22-38_1.mp4', mime: 'video/mp4', label: 'Moment 4' },
 ];

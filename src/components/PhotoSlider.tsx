@@ -31,7 +31,13 @@ export function PhotoSlider() {
             className={`hero-slider__slide ${i === index ? 'hero-slider__slide--on' : ''}`}
             aria-hidden={i !== index}
           >
-            <img src={slide.src} alt={slide.caption} />
+            <img
+              src={slide.src}
+              alt={slide.caption}
+              loading={i === 0 ? 'eager' : 'lazy'}
+              decoding="async"
+              fetchPriority={i === index ? 'high' : 'low'}
+            />
             <figcaption>{slide.caption}</figcaption>
           </figure>
         ))}

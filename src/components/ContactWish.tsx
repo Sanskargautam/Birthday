@@ -42,8 +42,11 @@ export function ContactWish() {
       });
       setStatus('sent');
       fireConfetti(1.25);
-    } catch {
-      setError('Could not save right now — try again in a moment.');
+    } catch (err) {
+      const msg = err instanceof Error && err.message === 'timeout'
+        ? 'The server was waking up (free hosting). Refresh the page, wait until the site loads, then tap Save again.'
+        : 'Could not save right now — refresh and try again.';
+      setError(msg);
       setStatus('error');
     }
   };

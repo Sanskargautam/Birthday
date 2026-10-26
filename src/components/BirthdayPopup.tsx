@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { fromAuthor, friendProfile } from '../content/messages';
+import { fromAuthor, headerCopy } from '../content/messages';
 import { fireConfetti } from '../utils/confetti';
 
 const STORAGE_KEY = 'ruu-bday-popup-v3';
@@ -24,9 +24,9 @@ export function BirthdayPopup() {
   return (
     <div className="bday-popup bday-popup--open" role="dialog" aria-modal="true" aria-labelledby="bday-popup-title">
       <div className="bday-popup__card">
-        <p className="bday-popup__eyebrow">27 · 27 October</p>
-        <h2 id="bday-popup-title">Happy Birthday!</h2>
-        <p className="bday-popup__name">{friendProfile.nickname}</p>
+        <p className="bday-popup__eyebrow">{headerCopy.wishDate}</p>
+        <h2 id="bday-popup-title">{headerCopy.wishTitle}</h2>
+        <p className="bday-popup__sub bday-popup__sub--punch">{headerCopy.punchline}</p>
         <p className="bday-popup__sub">
           {fromAuthor.name} made this for your birthday — come in when you’re ready.
         </p>

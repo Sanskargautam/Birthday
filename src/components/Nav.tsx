@@ -1,3 +1,4 @@
+import { headerCopy } from '../content/messages';
 import { useSectionSpy } from '../hooks/useSectionSpy';
 
 const links = [
@@ -15,9 +16,11 @@ export function Nav() {
     <header className="site-top">
       <div className="site-top__inner">
         <a className="site-top__brand" href="#top">
-          Sanskar <span aria-hidden>♥</span> Ruu
+          {headerCopy.wishTitle}
         </a>
-        <p className="site-top__date">Happy 27th · 27 October</p>
+        <p className="site-top__date">{headerCopy.wishDate}</p>
+        <p className="site-top__tagline">{headerCopy.punchline}</p>
+        <p className="site-top__signoff">{headerCopy.signoff}</p>
         <nav className="site-top__nav" aria-label="Sections">
           {links.map((l) => (
             <a

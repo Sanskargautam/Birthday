@@ -9,9 +9,11 @@
     "prebuild": "npm run sync-media",
     "build:store": "bash scripts/build-offstore.sh",
     "sync-media": "node scripts/sync-media.mjs",
+    "compress-media": "node scripts/compress-media.mjs && npm run sync-media",
     "lint": "oxlint",
     "preview": "vite preview",
-    "start": "node scripts/serve-with-picks.mjs"
+    "start": "node scripts/serve-with-picks.mjs",
+    "push:github": "node scripts/push-to-github.mjs"
   },
   "dependencies": {
     "react": "^19.3.1",

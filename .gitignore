@@ -11,6 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
+.github-push-token
 
 # Ruu's gift picks (live on the server, not in git)
 data/gift-picks.txt

@@ -1,4 +1,4 @@
-import { friendProfile } from '../content/messages';
+import { headerCopy } from '../content/messages';
 import { videoClips } from '../generated/videoClips';
 import { HEADER_LOOP_CLIP_ID, LoopClip } from './LoopClip';
 
@@ -13,8 +13,9 @@ export function HeaderLoopVideo() {
         <div className="header-loop__fade" aria-hidden />
         <p className="header-loop__badge" aria-hidden>27</p>
         <div className="header-loop__caption">
-          <p className="header-loop__eyebrow">27 October</p>
-          <h1 className="header-loop__title">Happy 27th, {friendProfile.nickname}</h1>
+          <p className="header-loop__eyebrow">{headerCopy.wishDate}</p>
+          <h1 className="header-loop__title">{headerCopy.wishTitle}</h1>
+          <p className="header-loop__subtitle">{headerCopy.punchline}</p>
         </div>
         <a className="header-loop__scroll" href="#photos" aria-label="Scroll to photos">
           <span className="header-loop__scroll-dot" aria-hidden />
