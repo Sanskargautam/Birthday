@@ -220,30 +220,148 @@ code {
   position: relative;
   width: 100%;
   height: 100%;
+  overflow: hidden;
+  background: linear-gradient(145deg, #1a1028 0%, #2d1a3d 45%, #120a1c 100%);
 }
 
+.loop-clip__placeholder {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  pointer-events: none;
+  opacity: 0.55;
+  transition: opacity 0.35s ease;
+}
+
+.loop-clip__frame {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.loop-clip--playing .loop-clip__placeholder,
+.loop-clip--playing .loop-clip__frame {
+  opacity: 0;
+}
+
+.loop-clip__placeholder-icon {
+  font-size: 1.75rem;
+  color: var(--terracotta);
+  filter: drop-shadow(0 4px 12px rgba(255, 107, 157, 0.35));
+}
+
+.loop-clip__placeholder-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.9;
+}
+
+.loop-clip__video,
 .loop-clip video {
+  position: relative;
+  z-index: 1;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
   display: block;
+  background: #08050f;
 }
 
-.loop-clip__tap {
+.loop-clip__hint {
   position: absolute;
-  inset: 0;
+  bottom: 0.65rem;
+  left: 0;
+  right: 0;
   z-index: 2;
   margin: 0;
-  padding: 0;
+  text-align: center;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.loop-clip__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 1rem;
   border: none;
   cursor: pointer;
   font: inherit;
-  font-size: 0.9rem;
-  font-weight: 600;
+  text-align: center;
   color: #fff5e8;
-  background: rgba(12, 8, 24, 0.55);
-  backdrop-filter: blur(4px);
+  background: rgba(12, 8, 24, 0.72);
+  backdrop-filter: blur(6px);
+}
+
+.loop-clip__overlay--loading {
+  cursor: default;
+  pointer-events: none;
+  background: rgba(12, 8, 24, 0.45);
+}
+
+.loop-clip__overlay-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.35;
+  max-width: 12rem;
+}
+
+.loop-clip__play-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  font-size: 1rem;
+  padding-left: 0.15rem;
+  background: rgba(255, 107, 157, 0.25);
+  border: 1px solid rgba(255, 107, 157, 0.55);
+}
+
+.loop-clip__overlay--error {
+  background: rgba(12, 8, 24, 0.82);
+}
+
+.loop-clip__overlay--error .loop-clip__overlay-text {
+  color: var(--gold);
+}
+
+.loop-clip__spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid rgba(255, 209, 102, 0.25);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: loop-clip-spin 0.85s linear infinite;
+}
+
+@keyframes loop-clip-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .loop-clip-frame__video {
