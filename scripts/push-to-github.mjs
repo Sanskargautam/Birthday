@@ -40,11 +40,19 @@ const safeRemote = `https://github.com/${owner}/${repo}.git`;
 
 console.log(`Pushing main → ${owner}/${repo} …`);
 
-execFileSync('git', ['push', '-u', pushUrl, 'main'], {
+execFileSync('git', ['push', pushUrl, 'HEAD:main'], {
   cwd: root,
   stdio: 'inherit',
   env: { ...process.env, GIT_TERMINAL_PROMPT: '0' },
 });
 
 execFileSync('git', ['remote', 'set-url', 'origin', safeRemote], { cwd: root, stdio: 'inherit' });
+try {
+  execFileSync('git', ['branch', '--set-upstream-to', 'origin/main', 'main'], {
+    cwd: root,
+    stdio: 'ignore',
+  });
+} catch {
+  // ponytail: first push to empty repo — upstream set on next fetch
+}
 console.log('Done. origin is', safeRemote);

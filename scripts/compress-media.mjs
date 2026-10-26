@@ -13,11 +13,14 @@ const publicGallery = join(root, 'public', 'gallery');
 const publicVideos = join(root, 'public', 'videos');
 const publicVideosWeb = join(publicVideos, 'web');
 
-const MAX_IMAGE_PX = 1920;
-const JPEG_QUALITY = 82;
-const PNG_TO_JPEG_MIN_BYTES = 650_000;
-const VIDEO_MAX_H = 1280;
-const VIDEO_CRF = 28;
+/** Mobile-first: small files load on slow LTE + cold Render deploys. */
+const MAX_IMAGE_PX = 1200;
+const JPEG_QUALITY = 72;
+const PNG_TO_JPEG_MIN_BYTES = 400_000;
+const VIDEO_MAX_H = 720;
+const VIDEO_CRF = 31;
+const VIDEO_MAXRATE = '900k';
+const AUDIO_BITRATE = '64k';
 
 const IMAGE_RE = /\.(jpe?g|png|gif|webp)$/i;
 const PLACEHOLDER_RE = /^gallery-\d+\.(jpe?g|png)$/i;
@@ -109,14 +112,22 @@ function compressWebVideo(file) {
     `scale=-2:'min(${VIDEO_MAX_H},ih)'`,
     '-c:v',
     'libx264',
+    '-profile:v',
+    'main',
+    '-level',
+    '4.0',
     '-crf',
     String(VIDEO_CRF),
+    '-maxrate',
+    VIDEO_MAXRATE,
+    '-bufsize',
+    '1800k',
     '-preset',
     'medium',
     '-c:a',
     'aac',
     '-b:a',
-    '96k',
+    AUDIO_BITRATE,
     '-movflags',
     '+faststart',
     '-pix_fmt',
@@ -183,6 +194,9 @@ function fmt(bytes) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+console.log(
+  `Mobile-low preset: images ≤${MAX_IMAGE_PX}px @ q${JPEG_QUALITY}, video ≤${VIDEO_MAX_H}p crf${VIDEO_CRF}`,
+);
 console.log('Compressing gallery images…');
 compressGallery();
 console.log('Compressing web videos (may take several minutes)…');
