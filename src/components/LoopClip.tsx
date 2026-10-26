@@ -19,7 +19,7 @@ function dbg(hypothesisId: string, message: string, data: Record<string, unknown
     headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4924d4' },
     body: JSON.stringify({
       sessionId: '4924d4',
-      runId: 'post-fix',
+      runId: 'post-fix-2',
       hypothesisId,
       location: 'LoopClip.tsx',
       message,
@@ -86,7 +86,7 @@ export function LoopClip({ clip, className = '', priority = 'high' }: Props) {
           beginLoad(clip.src);
         }
       },
-      { rootMargin: '120px 0px', threshold: 0.15 },
+      { rootMargin: '80px 0px', threshold: 0.35 },
     );
     io.observe(host);
     return () => io.disconnect();
@@ -101,23 +101,25 @@ export function LoopClip({ clip, className = '', priority = 'high' }: Props) {
     }
     setPhase('loading');
     try {
+      await v.play();
       document.querySelectorAll('video.loop-clip__video').forEach((el) => {
         if (el !== v) (el as HTMLVideoElement).pause();
       });
-      await v.play();
       setPhase('playing');
       // #region agent log
       dbg('C', 'playOk', { clipId: clip.id, ...videoDiag(v) });
       // #endregion
     } catch (err) {
-      setPhase('tap');
+      const errName = err instanceof Error ? err.name : 'unknown';
       // #region agent log
-      dbg('C', 'playRejected', {
-        clipId: clip.id,
-        err: err instanceof Error ? err.name : 'unknown',
-        ...videoDiag(v),
-      });
+      dbg('C', 'playRejected', { clipId: clip.id, err: errName, ...videoDiag(v) });
       // #endregion
+      if (errName === 'AbortError') return;
+      if (!v.paused) {
+        setPhase('playing');
+        return;
+      }
+      setPhase('tap');
     }
   }, [activeSrc, clip.id, inView]);
 
@@ -170,7 +172,6 @@ export function LoopClip({ clip, className = '', priority = 'high' }: Props) {
     v.addEventListener('error', onError);
 
     if (v.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) onReady();
-    else void tryPlay();
 
     const timeout = window.setTimeout(() => {
       if (!playingRef.current) {
@@ -190,6 +191,14 @@ export function LoopClip({ clip, className = '', priority = 'high' }: Props) {
     };
   }, [activeSrc, beginLoad, clip.fallbackSrc, clip.id, inView, retryKey, triedFallback, tryPlay]);
 
+  useEffect(() => {
+    if (!inView || !activeSrc) return;
+    const v = ref.current;
+    if (!v || !v.paused || phase === 'error') return;
+    if (phase === 'tap') return;
+    void tryPlay();
+  }, [activeSrc, inView, phase, tryPlay]);
+
   const preload = priority === 'high' ? 'auto' : 'metadata';
   const showOverlay = phase === 'loading' || phase === 'tap' || phase === 'error';
   const poster = clip.poster;
@@ -197,7 +206,7 @@ export function LoopClip({ clip, className = '', priority = 'high' }: Props) {
   return (
     <div
       ref={containerRef}
-      className={`loop-clip loop-clip--${phase}`}
+      className={`loop-clip loop-clip--${phase}${inView ? ' loop-clip--in-view' : ''}`}
       data-phase={phase}
     >
       {poster ? (
