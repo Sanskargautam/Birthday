@@ -115,15 +115,15 @@ if (!existsSync(dist)) {
 }
 
 createServer(async (req, res) => {
+  const url = new URL(req.url || '/', `http://${req.headers.host}`);
+  const handled = await handleGiftPicksApi(req, res, url.pathname, url.searchParams);
+  if (handled) return;
+
   if (req.method !== 'GET' && req.method !== 'HEAD') {
     res.statusCode = 405;
     res.end();
     return;
   }
-
-  const url = new URL(req.url || '/', `http://${req.headers.host}`);
-  const handled = await handleGiftPicksApi(req, res, url.pathname, url.searchParams);
-  if (handled) return;
 
   const filePath = resolveDistFile(url.pathname);
   sendStatic(req, res, filePath);
