@@ -250,8 +250,13 @@ code {
   transition: opacity 0.4s ease;
 }
 
-.loop-clip--playing.loop-clip--in-view .loop-clip__placeholder,
-.loop-clip--playing.loop-clip--in-view .loop-clip__frame {
+.loop-clip--show-poster .loop-clip__frame,
+.loop-clip--show-poster .loop-clip__placeholder {
+  opacity: 1;
+}
+
+.loop-clip--playing.loop-clip--in-view:not(.loop-clip--show-poster) .loop-clip__placeholder,
+.loop-clip--playing.loop-clip--in-view:not(.loop-clip--show-poster) .loop-clip__frame {
   opacity: 0;
 }
 
