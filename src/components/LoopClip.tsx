@@ -12,37 +12,6 @@ type Phase = 'placeholder' | 'loading' | 'playing' | 'tap' | 'error';
 
 const LOAD_TIMEOUT_MS = 22_000;
 
-// #region agent log
-function dbg(hypothesisId: string, message: string, data: Record<string, unknown>) {
-  fetch('http://127.0.0.1:7629/ingest/8c53e919-2522-440d-b2cc-77379c5cee36', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4924d4' },
-    body: JSON.stringify({
-      sessionId: '4924d4',
-      runId: 'post-fix-3',
-      hypothesisId,
-      location: 'LoopClip.tsx',
-      message,
-      data,
-      timestamp: Date.now(),
-    }),
-  }).catch(() => {});
-}
-
-function videoDiag(v: HTMLVideoElement) {
-  const err = v.error;
-  return {
-    readyState: v.readyState,
-    networkState: v.networkState,
-    paused: v.paused,
-    currentTime: v.currentTime,
-    currentSrc: v.currentSrc,
-    mediaErrorCode: err?.code ?? null,
-    mediaErrorMessage: err?.message ?? null,
-  };
-}
-// #endregion
-
 /** Browsers allow autoplay only when muted; iOS often needs an explicit play() or a tap. */
 export function LoopClip({ clip, className = '', priority = 'high' }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -57,20 +26,14 @@ export function LoopClip({ clip, className = '', priority = 'high' }: Props) {
   const [inView, setInView] = useState(priority === 'high');
 
   const beginLoad = useCallback((src: string) => {
-    // #region agent log
-    dbg('E', 'beginLoad', { clipId: clip.id, src, priority, autoPlay });
-    // #endregion
     readyHandledRef.current = false;
     setActiveSrc(src);
     setPhase('loading');
-  }, [autoPlay, clip.id, priority]);
+  }, []);
 
   useEffect(() => {
     playingRef.current = phase === 'playing';
-    // #region agent log
-    dbg('F', 'phaseChange', { clipId: clip.id, phase, inView, activeSrc, poster: clip.poster ?? null });
-    // #endregion
-  }, [activeSrc, clip.id, clip.poster, inView, phase]);
+  }, [phase]);
 
   useEffect(() => {
     const host = containerRef.current;
@@ -81,9 +44,6 @@ export function LoopClip({ clip, className = '', priority = 'high' }: Props) {
         const visible = Boolean(entry?.isIntersecting);
         setInView(visible);
         if (visible && priority === 'low' && !activeSrc) {
-          // #region agent log
-          dbg('E', 'intersectionLoad', { clipId: clip.id, ratio: entry?.intersectionRatio });
-          // #endregion
           beginLoad(clip.src);
         }
         if (!visible) ref.current?.pause();
@@ -92,7 +52,7 @@ export function LoopClip({ clip, className = '', priority = 'high' }: Props) {
     );
     io.observe(host);
     return () => io.disconnect();
-  }, [activeSrc, beginLoad, clip.id, clip.src, priority]);
+  }, [activeSrc, beginLoad, clip.src, priority]);
 
   const tryPlay = useCallback(async () => {
     const v = ref.current;
@@ -105,21 +65,12 @@ export function LoopClip({ clip, className = '', priority = 'high' }: Props) {
     try {
       await v.play();
       if (v.paused) {
-        // #region agent log
-        dbg('C', 'playStillPaused', { clipId: clip.id, ...videoDiag(v) });
-        // #endregion
         setPhase('tap');
         return;
       }
       setPhase('playing');
-      // #region agent log
-      dbg('C', 'playOk', { clipId: clip.id, ...videoDiag(v) });
-      // #endregion
     } catch (err) {
       const errName = err instanceof Error ? err.name : 'unknown';
-      // #region agent log
-      dbg('C', 'playRejected', { clipId: clip.id, err: errName, ...videoDiag(v) });
-      // #endregion
       if (errName === 'AbortError') return;
       if (!v.paused) {
         setPhase('playing');
@@ -127,16 +78,13 @@ export function LoopClip({ clip, className = '', priority = 'high' }: Props) {
       }
       setPhase('tap');
     }
-  }, [activeSrc, clip.id, inView]);
+  }, [activeSrc, inView]);
 
   const retry = useCallback(() => {
-    // #region agent log
-    dbg('D', 'retry', { clipId: clip.id });
-    // #endregion
     setTriedFallback(false);
     setRetryKey((k) => k + 1);
     beginLoad(clip.src);
-  }, [beginLoad, clip.id, clip.src]);
+  }, [beginLoad, clip.src]);
 
   useEffect(() => {
     const v = ref.current;
@@ -151,17 +99,10 @@ export function LoopClip({ clip, className = '', priority = 'high' }: Props) {
     const onReady = () => {
       if (readyHandledRef.current) return;
       readyHandledRef.current = true;
-      // #region agent log
-      dbg('B', 'mediaReadyOnce', { clipId: clip.id, autoPlay, ...videoDiag(v) });
-      // #endregion
       if (autoPlay && inView) void tryPlay();
       else setPhase('tap');
     };
     const onError = () => {
-      const diag = videoDiag(v);
-      // #region agent log
-      dbg('A', 'mediaError', { clipId: clip.id, triedFallback, activeSrc, ...diag });
-      // #endregion
       if (!triedFallback && clip.fallbackSrc && activeSrc !== clip.fallbackSrc) {
         setTriedFallback(true);
         beginLoad(clip.fallbackSrc);
@@ -179,9 +120,6 @@ export function LoopClip({ clip, className = '', priority = 'high' }: Props) {
 
     const timeout = window.setTimeout(() => {
       if (!playingRef.current && phase !== 'tap') {
-        // #region agent log
-        dbg('D', 'loadTimeout', { clipId: clip.id, ...videoDiag(v) });
-        // #endregion
         setPhase(autoPlay ? 'error' : 'tap');
       }
     }, LOAD_TIMEOUT_MS);
@@ -193,7 +131,7 @@ export function LoopClip({ clip, className = '', priority = 'high' }: Props) {
       v.removeEventListener('error', onError);
       window.clearTimeout(timeout);
     };
-  }, [activeSrc, autoPlay, beginLoad, clip.fallbackSrc, clip.id, inView, phase, retryKey, triedFallback, tryPlay]);
+  }, [activeSrc, autoPlay, beginLoad, clip.fallbackSrc, inView, phase, retryKey, triedFallback, tryPlay]);
 
   useEffect(() => {
     if (!autoPlay || !inView || !activeSrc) return;
